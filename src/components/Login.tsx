@@ -3,7 +3,42 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
+import supabaseClient from "@/lib/supabase/client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 const Login = () => {
+  const formData = new FormData();
+  const router = useRouter();
+  const signUpUserWithEmail = async () => {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
+    if (data.user) {
+      toast.success("User signed up successfully!");
+      router.push("/dashboard");
+    }
+    if (error) {
+      toast.error(`Error signing up user`);
+      console.error("Error signing up user:", error);
+    }
+  };
+
+  const signInUserWithEmailAndPassword = async () => {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  })
+   if (data.user) {
+      toast.success("Login successfully!");
+      router.push("/dashboard");
+    }
+    if (error) {
+      toast.error(`Error logging in user`);
+      console.error("Error signing up user:", error);
+    }
+  }
+
   const [isLogin, setIsLogin] = useState(true);
   const handleAuthSwitch = () => {
     setIsLogin(!isLogin);
@@ -18,14 +53,26 @@ const Login = () => {
           </p>
           <div className="w-full flex flex-col gap-1">
             <Label className="text-foreground/70">Email </Label>
-            <Input type="email" placeholder="email" />
+            <Input
+              type="email"
+              placeholder="email"
+              onChange={(e) => {
+                formData.append("email", e.target.value);
+              }}
+            />
           </div>
           <div className="w-full flex flex-col gap-1">
             <Label className="text-foreground/70">Password </Label>
-            <Input type="password" placeholder="password" />
+            <Input
+              type="password"
+              placeholder="password"
+              onChange={(e) => {
+                formData.append("password", e.target.value);
+              }}
+            />
           </div>
           <div className="w-full flex flex-col gap-1 py-2">
-            <Button className="hover:cursor-pointer bg-accent">Login</Button>
+            <Button className="hover:cursor-pointer bg-accent" onClick={signInUserWithEmailAndPassword}>Login</Button>
           </div>
           <div className="w-full flex items-center justify-center gap-2 p-3">
             <p>New User?</p>{" "}
@@ -45,19 +92,27 @@ const Login = () => {
             Create a new account using your credentials
           </p>
           <div className="w-full flex flex-col gap-1">
-            <Label className="text-foreground/70">Username </Label>
-            <Input type="text" placeholder="username" />
-          </div>
-          <div className="w-full flex flex-col gap-1">
             <Label className="text-foreground/70">Email</Label>
-            <Input type="email" placeholder="email" />
+            <Input
+              type="email"
+              placeholder="email"
+              onChange={(e) => {
+                formData.append("email", e.target.value);
+              }}
+            />
           </div>
           <div className="w-full flex flex-col gap-1">
             <Label className="text-foreground/70">Password</Label>
-            <Input type="password" placeholder="password" />
+            <Input
+              type="password"
+              placeholder="password"
+              onChange={(e) => {
+                formData.append("password", e.target.value);
+              }}
+            />
           </div>
           <div className="w-full flex flex-col gap-1 py-2">
-            <Button className="hover:cursor-pointer bg-accent">Signup</Button>
+            <Button className="hover:cursor-pointer bg-accent" onClick={signUpUserWithEmail}>Signup</Button>
           </div>
           <div className="w-full flex items-center justify-center gap-2 p-3">
             <p>Already have an account?</p>
