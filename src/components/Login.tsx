@@ -7,16 +7,24 @@ import supabaseClient from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 const Login = () => {
-  const formData = new FormData();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
   const signUpUserWithEmail = async () => {
     const { data, error } = await supabaseClient.auth.signUp({
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
+      email: email,
+      password: password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
     });
-    if (data.user) {
-      toast.success("User signed up successfully!");
-      router.push("/dashboard");
+    if (!data.session) {
+      toast.success(
+        "Signup successful! Please check your email to verify your account."
+      );
+      localStorage.setItem("algolog_email", email);
+      router.push("/verify-email");
+      return;
     }
     if (error) {
       toast.error(`Error signing up user`);
@@ -26,10 +34,10 @@ const Login = () => {
 
   const signInUserWithEmailAndPassword = async () => {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  })
-   if (data.user) {
+      email: email,
+      password: password,
+    });
+    if (data.session) {
       toast.success("Login successfully!");
       router.push("/dashboard");
     }
@@ -37,7 +45,7 @@ const Login = () => {
       toast.error(`Error logging in user`);
       console.error("Error signing up user:", error);
     }
-  }
+  };
 
   const [isLogin, setIsLogin] = useState(true);
   const handleAuthSwitch = () => {
@@ -57,7 +65,7 @@ const Login = () => {
               type="email"
               placeholder="email"
               onChange={(e) => {
-                formData.append("email", e.target.value);
+                setEmail(e.target.value);
               }}
             />
           </div>
@@ -67,13 +75,19 @@ const Login = () => {
               type="password"
               placeholder="password"
               onChange={(e) => {
-                formData.append("password", e.target.value);
+                setPassword(e.target.value);
               }}
             />
           </div>
           <div className="w-full flex flex-col gap-1 py-2">
-            <Button className="hover:cursor-pointer bg-accent" onClick={signInUserWithEmailAndPassword}>Login</Button>
+            <Button
+              className="hover:cursor-pointer bg-accent"
+              onClick={signInUserWithEmailAndPassword}
+            >
+              Login
+            </Button>
           </div>
+
           <div className="w-full flex items-center justify-center gap-2 p-3">
             <p>New User?</p>{" "}
             <a
@@ -97,7 +111,7 @@ const Login = () => {
               type="email"
               placeholder="email"
               onChange={(e) => {
-                formData.append("email", e.target.value);
+                setEmail(e.target.value);
               }}
             />
           </div>
@@ -107,12 +121,17 @@ const Login = () => {
               type="password"
               placeholder="password"
               onChange={(e) => {
-                formData.append("password", e.target.value);
+                setPassword(e.target.value);
               }}
             />
           </div>
           <div className="w-full flex flex-col gap-1 py-2">
-            <Button className="hover:cursor-pointer bg-accent" onClick={signUpUserWithEmail}>Signup</Button>
+            <Button
+              className="hover:cursor-pointer bg-accent"
+              onClick={signUpUserWithEmail}
+            >
+              Signup
+            </Button>
           </div>
           <div className="w-full flex items-center justify-center gap-2 p-3">
             <p>Already have an account?</p>
