@@ -6,6 +6,8 @@ import { useState } from "react";
 import supabaseClient from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import logo from "@/public/logo.png";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,7 +57,20 @@ const Login = () => {
     <div>
       {isLogin ? (
         <div className="flex flex-col gap-4 items-center justify-center  p-6 rounded-lg ">
-          <h1 className="text-2xl font-semibold">Login</h1>
+          {/* Intro */}
+          <div className="w-full flex items-center justify-start gap-4 mb-4">
+            <Image
+              className="rounded-full w-[35px] h-[35px]"
+              src={logo}
+              alt=""
+            />
+            <h1 className="text-3xl font-semibold">AlgoLog</h1>
+          </div>
+          <div className="w-full flex flex-col gap-2 items-center justify-center border-b py-6">
+            <Button>Sign in with Google</Button>
+          </div>
+
+          {/* Email password auth */}
           <p className="text-foreground/70 ">
             Enter your credentials to access your account
           </p>
