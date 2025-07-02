@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Navbar from "@/src/components/Navbar";
 const Dashboard = () => {
   const router = useRouter();
   useEffect(() => {
@@ -16,7 +17,15 @@ const Dashboard = () => {
       }
     });
   }, []);
-  return <div>dash</div>;
+  return (
+    <>
+      <div>
+        <div>
+          <Navbar/>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default Dashboard;
