@@ -28,9 +28,11 @@ const Login = () => {
     });
     if (error) {
       if (error.message.toLowerCase().includes("user already registered")) {
-        toast.error("An account with this email already exists.");
+        toast("An account with this email already exists.");
       } else {
-        toast.error("Signup failed. Please try again.");
+        toast("Signup failed. Please try again.", {
+          style: { backgroundColor: "#ef4444", color: "white" },
+        });
       }
       console.error("Signup error:", error.message);
       setError(error.message);
@@ -39,16 +41,18 @@ const Login = () => {
     }
 
     if (!data.session && !error) {
-      toast.success(
-        "Signup successful! Please check your email to verify your account."
-      );
+      toast("Sign Up successful!! Please verify your email", {
+        style: { backgroundColor: "#22c55e", color: "white" },
+      });
       localStorage.setItem("algolog_email", email);
       setIsLoading(false);
       router.push("/verify-email");
       return;
     } else if (data.session) {
       router.push("/dashboard");
-      toast.success("Signup successful! Redirecting to dashboard.");
+      toast("Sign Up successful!! Redirecting to dashboard", {
+        style: { backgroundColor: "#22c55e", color: "white" },
+      });
       localStorage.setItem("algolog_email", email);
       setIsLoading(false);
       return;
@@ -62,14 +66,18 @@ const Login = () => {
       password: password,
     });
     if (data.session) {
-      toast.success("Login successfull!");
+      toast("Login successful!!", {
+        style: { backgroundColor: "#22c55e", color: "white" },
+      });
       router.push("/dashboard");
       setIsLoading(false);
       setError(null);
       return;
     }
     if (error) {
-      toast.error(`Error logging in user`);
+      toast(`Error logging in user`, {
+        style: { backgroundColor: "#ef4444", color: "white" },
+      });
       console.error("Error signing up user:", error);
       setError(error.message);
       setIsLoading(false);
