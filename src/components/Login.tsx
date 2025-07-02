@@ -8,11 +8,17 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logo from "@/public/logo.png";
+import Loader from "./Loader";
+
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const signUpUserWithEmail = async () => {
+  const signUpUserWithEmailandPassword = async () => {
+    setIsLoading(true);
+
     const { data, error } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
@@ -20,32 +26,54 @@ const Login = () => {
         emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
-    if (!data.session) {
+    if (error) {
+      if (error.message.toLowerCase().includes("user already registered")) {
+        toast.error("An account with this email already exists.");
+      } else {
+        toast.error("Signup failed. Please try again.");
+      }
+      console.error("Signup error:", error.message);
+      setError(error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!data.session && !error) {
       toast.success(
         "Signup successful! Please check your email to verify your account."
       );
       localStorage.setItem("algolog_email", email);
+      setIsLoading(false);
       router.push("/verify-email");
       return;
-    }
-    if (error) {
-      toast.error(`Error signing up user`);
-      console.error("Error signing up user:", error);
+    } else if (data.session) {
+      router.push("/dashboard");
+      toast.success("Signup successful! Redirecting to dashboard.");
+      localStorage.setItem("algolog_email", email);
+      setIsLoading(false);
+      return;
     }
   };
 
   const signInUserWithEmailAndPassword = async () => {
+    setIsLoading(true);
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password,
     });
     if (data.session) {
-      toast.success("Login successfully!");
+      toast.success("Login successfull!");
       router.push("/dashboard");
+      setIsLoading(false);
+      setError(null);
+      return;
     }
     if (error) {
       toast.error(`Error logging in user`);
       console.error("Error signing up user:", error);
+      setError(error.message);
+      setIsLoading(false);
+      return;
     }
   };
 
@@ -56,9 +84,9 @@ const Login = () => {
   return (
     <div>
       {isLogin ? (
-        <div className="flex flex-col gap-4 items-center justify-center  p-6 rounded-lg ">
+        <div className="flex flex-col gap-4 items-center justify-center rounded-lg px-12 py-6 border-border">
           {/* Intro */}
-          <div className="w-full flex items-center justify-start gap-4 mb-4">
+          <div className="w-full flex items-center justify-start gap-2 pt-3">
             <Image
               className="rounded-full w-[35px] h-[35px]"
               src={logo}
@@ -66,87 +94,148 @@ const Login = () => {
             />
             <h1 className="text-3xl font-semibold">AlgoLog</h1>
           </div>
-          <div className="w-full flex flex-col gap-2 items-center justify-center border-b py-6">
-            <Button>Sign in with Google</Button>
+          <div className="w-full flex items-center justify-start gap-2">
+            <p className="font-small text-md text-foreground/70">
+              Login to AlgoLog now
+            </p>
           </div>
-
-          {/* Email password auth */}
-          <p className="text-foreground/70 ">
-            Enter your credentials to access your account
-          </p>
-          <div className="w-full flex flex-col gap-1">
-            <Label className="text-foreground/70">Email </Label>
-            <Input
-              type="email"
-              placeholder="email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-1">
-            <Label className="text-foreground/70">Password </Label>
-            <Input
-              type="password"
-              placeholder="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-          </div>
-          <div className="w-full flex flex-col gap-1 py-2">
+          <div className="w-full flex flex-col gap-2  border-b border-border pt-3  pb-6">
             <Button
-              className="hover:cursor-pointer bg-accent"
-              onClick={signInUserWithEmailAndPassword}
+              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full"
+              disabled
             >
-              Login
+              Coming soon: Sign in with Google
             </Button>
           </div>
 
+          <form
+            action=""
+            onSubmit={(e) => {
+              e.preventDefault();
+              signInUserWithEmailAndPassword();
+            }}
+            className="w-full flex flex-col gap-4"
+          >
+            <div className="w-full flex flex-col gap-1">
+              <Label className="text-foreground/70">Email </Label>
+              <Input
+                required
+                className="border-border border-[1px]"
+                type="email"
+                placeholder="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <Label className="text-foreground/70">Password </Label>
+              <Input
+                required
+                minLength={6}
+                className="border-border border-[1px]"
+                type="password"
+                placeholder="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1 items-center justify-center">
+              {error && (
+                <p className="text-sm text-red-500 px-2 py-1 rounded">
+                  {error}
+                </p>
+              )}
+            </div>
+            <div className="w-full flex flex-col gap-1 py-2">
+              <Button
+                className="hover:cursor-pointer hover:bg-accent/80 bg-accent"
+                type="submit"
+              >
+                {isLoading ? <Loader /> : "Login"}
+              </Button>
+            </div>
+          </form>
+
           <div className="w-full flex items-center justify-center gap-2 p-3">
-            <p>New User?</p>{" "}
+            <p>Don&apos;t have an account?</p>{" "}
             <a
               onClick={handleAuthSwitch}
               className="underline hover:cursor-pointer"
               role="button"
             >
-              Create an account
+              Sign Up Now
             </a>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 items-center justify-center p-6 rounded-lg">
-          <h1 className="text-2xl font-semibold">Signup</h1>
-          <p className="text-foreground/70">
-            Create a new account using your credentials
-          </p>
-          <div className="w-full flex flex-col gap-1">
-            <Label className="text-foreground/70">Email</Label>
-            <Input
-              type="email"
-              placeholder="email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+        <div className="flex flex-col gap-4 items-center justify-center p-6 rounded-lg border-border ">
+          <div className="w-full flex items-center justify-start gap-2 pt-3">
+            <Image
+              className="rounded-full w-[35px] h-[35px]"
+              src={logo}
+              alt=""
             />
+            <h1 className="text-3xl font-semibold">AlgoLog</h1>
           </div>
-          <div className="w-full flex flex-col gap-1">
-            <Label className="text-foreground/70">Password</Label>
-            <Input
-              type="password"
-              placeholder="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
+          <div className="w-full flex items-center justify-start gap-2">
+            <p className="font-small text-md text-foreground/70">
+              SignUp to AlgoLog now
+            </p>
           </div>
-          <div className="w-full flex flex-col gap-1 py-2">
+          <div className="w-full flex flex-col gap-2  border-b border-border pt-3  pb-6">
             <Button
-              className="hover:cursor-pointer bg-accent"
-              onClick={signUpUserWithEmail}
+              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full"
+              disabled
             >
-              Signup
+              Coming soon: Sign in with Google
             </Button>
+          </div>
+
+          <form
+            action=""
+            onSubmit={(e) => {
+              e.preventDefault();
+              signUpUserWithEmailandPassword();
+            }}
+            className="w-full flex flex-col gap-4"
+          >
+            <div className="w-full flex flex-col gap-1">
+              <Label className="text-foreground/70">Email</Label>
+              <Input
+                required
+                className="border-border border-[1px]"
+                type="email"
+                placeholder="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <Label className="text-foreground/70">Password</Label>
+              <Input
+                minLength={6}
+                required
+                className="border-border border-[1px]"
+                type="password"
+                placeholder="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1 py-2">
+              <Button type="submit" className="hover:cursor-pointer bg-accent">
+                {isLoading ? <Loader /> : "Signup"}
+              </Button>
+            </div>
+          </form>
+          <div className="w-full flex flex-col gap-1 items-center justify-center">
+            {error && (
+              <p className="text-sm text-red-500 px-2 py-1 rounded">{error}</p>
+            )}
           </div>
           <div className="w-full flex items-center justify-center gap-2 p-3">
             <p>Already have an account?</p>
