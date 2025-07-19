@@ -12,10 +12,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className="bg-background text-foreground antialiased">
-        <div className="flex ">
+        <div className="flex">
           <Navbar />
-          <div className="flex"></div>
-          {children}
+          <div className="flex-1 py-3 px-3">{children}</div>
         </div>
       </body>
     </html>
