@@ -2,7 +2,12 @@
 "use client";
 
 import type React from "react";
+import { createAxiosInstance } from "@/src/utils/axios";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
+import supabaseClient from "@/lib/supabase/client";
+import { queryClient } from "@/src/utils/react-query";
 import { useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -27,7 +32,6 @@ import {
 import { CalendarIcon, Clock, Zap, Star, Tag, File } from "lucide-react";
 
 import type { ProblemForm } from "@/src/types/problem";
-import { useSubmitProblem } from "@/src/hooks/useSubmitProblem";
 
 export default function ProblemForm() {
   const [form, setForm] = useState<ProblemForm>({
@@ -50,9 +54,38 @@ export default function ProblemForm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const mutation = useMutation({
+    mutationFn: async (form: ProblemForm) => {
+      const {
+        data: { session },
+      } = await supabaseClient.auth.getSession();
+
+      const token = session?.access_token;
+      if (!token) throw new Error("User not logged in");
+
+      const payload = {
+        ...form,
+        tags: form.tags.split(",").map((tag) => tag.trim()),
+      };
+      const axiosInstance = createAxiosInstance(token);
+
+      const res = await axiosInstance.post("add-problems", payload);
+
+      return res.data;
+    },
+    onSuccess: () => {
+      toast("Upload successful", { richColors: true });
+      queryClient.invalidateQueries({ queryKey: ["problems"] }); // ⬅️ Invalidate cache
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (err: any) => {
+      toast("Upload failed: " + err.message, { richColors: true });
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await useSubmitProblem();
+    mutation.mutate(form)
   };
 
   const difficulties = ["Easy", "Medium", "Hard"];
