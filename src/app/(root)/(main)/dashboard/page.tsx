@@ -174,7 +174,7 @@ const LogsPage = () => {
         </select>
         <Button
           onClick={() => router.push("/add")}
-          className="ml-auto hover:cursor-pointer"
+          className="ml-auto hover:cursor-pointer hidden md:flex items-center justify-center"
         >
           <PlusCircle /> Add Problem
         </Button>

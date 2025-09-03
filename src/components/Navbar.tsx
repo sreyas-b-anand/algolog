@@ -57,16 +57,16 @@ const Navbar = () => {
           </Link>
 
 
-          <Link href="/revision">
+          <Link href="/export">
             <div
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                pathname === "/revision"
+                pathname === "/export"
                   ? "bg-accent text-primary"
                   : "text-foreground/80 hover:bg-accent/50"
               }`}
             >
               <File className="w-4 h-4" />
-              <span>Revision</span>
+              <span>Export</span>
             </div>
           </Link>
         </nav>
