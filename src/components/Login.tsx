@@ -3,7 +3,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
-import supabaseClient from "@/lib/supabase/client";
+import supabaseClient from "@/src/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";

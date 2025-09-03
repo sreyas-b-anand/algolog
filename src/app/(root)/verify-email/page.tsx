@@ -1,6 +1,6 @@
 "use client";
 
-import supabaseClient from "@/lib/supabase/client";
+import supabaseClient from "@/src/lib/supabase/client";
 import { Button } from "@/src/components/ui/button";
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";

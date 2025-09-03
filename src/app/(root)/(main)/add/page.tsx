@@ -5,7 +5,7 @@ import type React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import supabaseClient from "@/lib/supabase/client";
+import supabaseClient from "@/src/lib/supabase/client";
 import { queryClient } from "@/src/utils/react-query";
 import { useState } from "react";
 import { Button } from "@/src/components/ui/button";

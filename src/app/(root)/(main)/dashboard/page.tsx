@@ -9,7 +9,7 @@ import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { Input } from "@/src/components/ui/input";
 import { Loader2, PlusCircle, Star, Trash2 } from "lucide-react";
-import supabaseClient from "@/lib/supabase/client";
+import supabaseClient from "@/src/lib/supabase/client";
 
 type Problem = {
   id: string;

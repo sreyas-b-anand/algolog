@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import supabaseClient from "@/lib/supabase/client";
+import supabaseClient from "@/src/lib/supabase/client";
 import { Loader2, ArrowLeft, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -45,7 +45,12 @@ export default function Log() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { data: problem, isLoading, isError, error } = useQuery({
+  const {
+    data: problem,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["problem", id],
     queryFn: () => fetchProblemById(id as string),
     enabled: !!id,
@@ -90,8 +95,12 @@ export default function Log() {
 
           {/* Metadata */}
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span>{problem.platform} #{problem.question_number}</span>
-            <span>Solved on: {new Date(problem.solved_at).toLocaleDateString()}</span>
+            <span>
+              {problem.platform} #{problem.question_number}
+            </span>
+            <span>
+              Solved on: {new Date(problem.solved_at).toLocaleDateString()}
+            </span>
             {problem.is_important && (
               <span className="flex items-center gap-1 text-yellow-500 font-semibold">
                 <Star className="h-4 w-4 fill-yellow-400" /> Important
@@ -120,7 +129,9 @@ export default function Log() {
             </Card>
             <Card className="bg-card border">
               <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground">Space Complexity</p>
+                <p className="text-sm text-muted-foreground">
+                  Space Complexity
+                </p>
                 <h2 className="text-lg font-semibold">{problem.s_c}</h2>
               </CardContent>
             </Card>
