@@ -3,7 +3,7 @@ import React from 'react'
 const Revision = () => {
   return (
     <div>
-      Revision
+      In Development
     </div>
   )
 }
