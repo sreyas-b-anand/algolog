@@ -92,9 +92,9 @@ const Login = () => {
   return (
     <div>
       {isLogin ? (
-        <div className="flex flex-col gap-4 items-center justify-center rounded-lg px-12 py-6 border-border">
+        <div className="flex flex-col gap-4 items-center justify-center rounded-lg px-12 py-6 border-border bg-card">
           {/* Intro */}
-          <div className="w-full flex items-center justify-start gap-2 pt-3">
+          <div className="w-full flex items-center justify-center gap-2 pt-3">
             <Image
               className="rounded-full w-[35px] h-[35px]"
               src={logo}
@@ -102,14 +102,14 @@ const Login = () => {
             />
             <h1 className="text-3xl font-semibold">AlgoLog</h1>
           </div>
-          <div className="w-full flex items-center justify-start gap-2">
+          <div className="w-full flex items-center justify-center gap-2">
             <p className="font-small text-md text-foreground/70">
               Login to AlgoLog now
             </p>
           </div>
           <div className="w-full flex flex-col gap-2  border-b border-border pt-3  pb-6">
             <Button
-              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full"
+              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full text-foreground"
               disabled
             >
               Coming soon: Sign in with Google
@@ -158,7 +158,7 @@ const Login = () => {
             </div>
             <div className="w-full flex flex-col gap-1 py-2">
               <Button
-                className="hover:cursor-pointer hover:bg-accent/80 bg-accent"
+                className="hover:cursor-pointer hover:bg-accent/80 bg-white text-black"
                 type="submit"
               >
                 {isLoading ? <Loader /> : "Login"}
@@ -178,8 +178,8 @@ const Login = () => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 items-center justify-center p-6 rounded-lg border-border ">
-          <div className="w-full flex items-center justify-start gap-2 pt-3">
+        <div className="flex flex-col px-12 gap-4 items-center justify-center py-6 rounded-lg border-border bg-card ">
+          <div className="w-full flex items-center justify-center gap-2 pt-3">
             <Image
               className="rounded-full w-[35px] h-[35px]"
               src={logo}
@@ -187,14 +187,14 @@ const Login = () => {
             />
             <h1 className="text-3xl font-semibold">AlgoLog</h1>
           </div>
-          <div className="w-full flex items-center justify-start gap-2">
+          <div className="w-full flex items-center justify-center gap-2">
             <p className="font-small text-md text-foreground/70">
               SignUp to AlgoLog now
             </p>
           </div>
           <div className="w-full flex flex-col gap-2  border-b border-border pt-3  pb-6">
             <Button
-              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full"
+              className="bg-accent hover:cursor-pointer hover:bg-accent/80 w-full text-foreground"
               disabled
             >
               Coming soon: Sign in with Google
@@ -235,7 +235,10 @@ const Login = () => {
               />
             </div>
             <div className="w-full flex flex-col gap-1 py-2">
-              <Button type="submit" className="hover:cursor-pointer bg-accent">
+              <Button
+                type="submit"
+                className="hover:cursor-pointer bg-white text-black"
+              >
                 {isLoading ? <Loader /> : "Signup"}
               </Button>
             </div>
